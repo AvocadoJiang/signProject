@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <input type="file" id="fileName" id="getFile" name="usrName" size="100">
+    <form enctype="multipart/form-data" method="post" name="fileinfo">
+       
+        <label>File to stash:</label>
+        <input type="file" name="file" required />
+        <input type="submit" value="Stash the file!" />
+    </form>
+
+
+
+    <button id="btn" type="button">点击</button>
+
+    <button id="up">up</button>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        $('#btn').click(() => {
+            var $eleForm = $("<form method='get'></form>");
+            //修改下载的excel路径
+            $eleForm.attr("action", "https://nbjzj.xin/sign/order");
+            $(document.body).append("type","UPLOAD");
+            $eleForm.submit();
+            var timer = new Date();
+
+           /** $.get('https://nbjzj.xin/sign/download', { time: timer }, (data) => {
+                console.log("1")
+            })*/
+        })
+
+
+        $('#up').click(() => {
+            
+            
+        })
+
+        var form = document.forms.namedItem("fileinfo");
+        form.addEventListener('submit', function (ev) {
+
+            var oOutput = document.querySelector("div"),
+                oData = new FormData(form);
+
+            oData.append("type","UPLOAD");
+            oData.append("data", JSON.stringify({
+                'course_id': '1',
+             
+            }));
+            var oReq = new XMLHttpRequest();
+            oReq.open("POST", "order", true);
+            oReq.onload = function (oEvent) {
+                if (oReq.status == 200) {
+                    oOutput.innerHTML = "Uploaded!";
+                } else {
+                    oOutput.innerHTML = "Error " + oReq.status + " occurred when trying to upload your file.<br \/>";
+                }
+            };
+
+            oReq.send(oData);
+            ev.preventDefault();
+        }, false);
+
+
+    </script>
+</body>
+
+</html>

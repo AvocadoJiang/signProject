@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>账单管理</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/bootstrap-responsive.min.css" />
+  <link rel="stylesheet" href="css/fullcalendar.css" />
+  <link rel="stylesheet" href="css/matrix-style.css" />
+  <link rel="stylesheet" href="css/matrix-media.css" />
+  <link href="font-awesome/css/font-awesome.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/jquery.gritter.css" />
+  <link rel="stylesheet" href="css/datepicker.css" />
+  <link rel="stylesheet" href="css/et.css">
+  <link rel="icon" href="img/icon.png" sizes="512x512">
+
+  <!-- <link href='http://fonts.useso.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'> -->
+  <style>
+    input {
+      width: 95% !important;
+    }
+
+    select {
+      width: 95% !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="header">
+    <h1>liu</h1>
+  </div>
+
+  <div id="user-nav" class="navbar navbar-inverse">
+    <ul class="nav">
+      <li class="dropdown" id="profile-messages">
+        <a title="" href="#" class="dropdown-toggle">
+          <i class="icon icon-user"></i>
+          <span class="text" id="topBarName"></span>
+        </a>
+      </li>
+      <li class="">
+        <a title="" href="#" id="logout">
+          <i class="icon icon-share-alt"></i>
+          <span class="text">退出</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <nav id="nav">
+    <navbar :active="active"></navbar>
+  </nav>
+
+  <div id="content">
+
+    <div id="content-header">
+      <div id="breadcrumb">
+        <a href="#" title="Go to Home" class="tip-bottom">
+          <i class="icon-home"></i> 留学生管理系统</a>
+        <a href="#" class="current">账单管理</a>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <hr>
+      <div class="row-fluid">
+        <div class="span12">
+          <div class="widget-box">
+            <div class="widget-title">
+              <span class="icon">
+                <i class="icon-align-justify"></i>
+              </span>
+              <h5>添加账单</h5>
+            </div>
+            <div class="widget-content nopadding">
+              <form action="#" method="get" class="form-horizontal">
+                <div class="control-group">
+                  <label class="control-label">缴费类型</label>
+                  <div class="controls">
+                    <select name="" id="" v-model="curtype">
+                      <option :value="item.id" v-for="item in billtype" v-text="item.payTypeName"></option>
+                    </select>
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">应缴金额</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="totalMoney" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">截止日期</label>
+                  <div class="controls">
+                    <input type="text" data-date="01-02-2013" id="deadline" data-date-format="yyyy-mm-dd" class="datepicker span11">
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">描述</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="describe" />
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <button type="button" class="btn btn-success" @click="add">添加</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <hr>
+      <div class="row-fluid">
+        <div class="span12">
+          <div class="widget-box">
+            <div class="widget-title">
+              <span class="icon">
+                <i class="icon-align-justify"></i>
+              </span>
+              <h5>账单管理</h5>
+            </div>
+            <div class="widget-content nopadding">
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>账单类型</th>
+                    <th>创建人</th>
+                    <th>截止日期</th>
+                    <th>描述</th>
+                    <th>应缴金额</th>
+                    <th>创建时间</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in showbillList">
+                    <td v-text="item.payTypeName"></td>
+                    <td v-text="item.paymentCreatorName"></td>
+                    <td v-text="item.paymentDeadline"></td>
+                    <td v-text="item.paymentDescribe"></td>
+                    <td v-text="item.paymentTotalMoney"></td>
+                    <td v-text="item.paymentValidDate"></td>
+                    <td>
+                      <button class="btn btn-primary" @click="addpay(item)">添加记录</button>
+                      <button class="btn btn-success" @click="de(item)">详情</button>
+                      <button class="btn btn-danger" @click="del(item)">删除</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style="float:right; margin-top: 6px">
+                <v-pagination :total="total" size="small" @page-change="setpage"></v-pagination>
+              </div>
+              <div class="clearfix"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <hr>
+      <div class="row-fluid">
+        <div class="span12">
+          <div class="widget-box">
+            <div class="widget-title">
+              <span class="icon">
+                <i class="icon-align-justify"></i>
+              </span>
+              <h5>账单详情</h5>
+            </div>
+            <div class="widget-content nopadding">
+
+              <table class="table table-bordered table-striped" v-if="billinfo.length">
+                <thead>
+                  <tr>
+                    <th>缴费人</th>
+                    <th>护照</th>
+                    <th>缴费金额</th>
+                    <th>缴费描述</th>
+                    <th>缴清时间</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in billinfo">
+                    <td v-text="item.payUserName"></td>
+                    <td v-text="item.payUserId"></td>
+                    <td v-text="item.payMoney"></td>
+                    <td v-text="item.payDescribe"></td>
+                    <td v-text="item.payCompleteDate"></td>
+                    <td>
+                      <button class="btn btn-success" @click="editpayment(item)">继续缴费</button>
+                      <button class="btn btn-danger" @click="delpayment(item)">删除</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div v-if="!billinfo.length" style="margin: 20px; font-size: 20px;">
+                没选择账单或没有缴费记录
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="addpay" class="modal hide fade in" style="display: none; ">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">×</a>
+          <h3>添加缴费记录</h3>
+        </div>
+        <div class="modal-body">
+          <div class="row-fluid">
+            <div class="span12">
+              <form action="#" method="get" class="form-horizontal">
+                <div class="control-group">
+                  <label class="control-label">缴费金额</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="paymoney" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">缴费人</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="护照号或学号" v-model="payuser" @keyup="check" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label"></label>
+                  <div class="controls">
+                    <strong>{{ realname }}</strong>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-success" @click="addpayr">添加</button>
+          <a href="#" class="btn" data-dismiss="modal">取消</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="editpayment" class="modal hide fade in" style="display: none; ">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">×</a>
+          <h3>继续缴费</h3>
+        </div>
+        <div class="modal-body">
+          <div class="row-fluid">
+            <div class="span12">
+              <form action="#" method="get" class="form-horizontal">
+                <div class="control-group">
+                  <label class="control-label">缴费金额</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="editPaymoney" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">缴费人</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="editPayuser" />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-success" @click="editPaymentr">缴费</button>
+          <a href="#" class="btn" data-dismiss="modal">取消</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/excanvas.min.js"></script>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/jquery.ui.custom.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.flot.min.js"></script>
+  <script src="js/jquery.flot.resize.min.js"></script>
+  <script src="js/jquery.peity.min.js"></script>
+  <script src="js/fullcalendar.min.js"></script>
+  <script src="js/matrix.js"></script>
+  <script src="js/matrix.dashboard.js"></script>
+  <script src="js/jquery.gritter.min.js"></script>
+  <script src="js/matrix.interface.js"></script>
+  <script src="js/matrix.chat.js"></script>
+  <script src="js/jquery.validate.js"></script>
+  <script src="js/matrix.form_validation.js"></script>
+  <script src="js/jquery.wizard.js"></script>
+  <script src="js/jquery.uniform.js"></script>
+  <script src="js/select2.min.js"></script>
+  <script src="js/matrix.popover.js"></script>
+  <script src="js/jquery.dataTables.min.js"></script>
+  <script src="js/matrix.tables.js"></script>
+  <script src="js/vue.min.js"></script>
+  <script src="js/bootstrap-datepicker.js"></script>
+  <script src="js/components/navbar.js"></script>
+  <script src="js/et.js"></script>
+
+  <script type="text/javascript">
+    // This function is called from the pop-up menus to transfer to
+    // a different page. Ignore if the value returned is a null string:
+    function goPage(newURL) {
+
+      // if url is empty, skip the menu dividers and reset the menu selection to default
+      if (newURL != "") {
+
+        // if url is "-", it is this page -- reset the menu:
+        if (newURL == "-") {
+          resetMenu();
+        }
+        // else, send page to designated URL            
+        else {
+          document.location.href = newURL;
+        }
+      }
+    }
+
+    new Vue({
+      el: '#nav',
+      components: {
+        'navbar': NavBar
+      },
+      data: {
+        active: 3
+      }
+    });
+
+    new Vue({
+      el: '#content',
+      data: {
+        billtype: [],
+        curtype: '',
+
+        totalMoney: '',
+        deadline: '',
+        describe: '',
+
+        billList: [],
+        showbillList: [],
+
+        billinfo: [],
+
+        paymoney: '',
+        payuser: '',
+        curbill: {},
+
+        editPaymoney: '',
+        editPayuser: '',
+        editPaymentId: '',
+
+        total: 0,
+        curpage: 1,
+
+        realname: ''
+      },
+      methods: {
+        editpayment: function (item) {
+          $('#editpayment').modal('show');
+          this.editPaymentId = item.paymentId;
+          // this.editPaymoney = item.payMoney;
+          this.editPayuser = item.payUserId;
+        },
+        delpayment: function (item) {
+          $.ajax({
+            type: "POST",
+            url: ip + '/pay',
+            data: {
+              'type': 'delete',
+              'pay': JSON.stringify({
+                "paymentId": item.paymentId,
+                "userId": item.payUserId
+              })
+            },
+            dataType: "json",
+            success: function (data) {
+              if (data.stagus) {
+                cp('删除成功');
+                return;
+              }
+              cp(data.msg);
+            },
+            error: function (jqXHR) {
+              cp('删除失败');
+            }
+          });
+
+
+        },
+        editPaymentr: function () {
+          $.ajax({
+            type: "POST",
+            url: ip + '/pay',
+            data: {
+              'type': 'update',
+              'pay': JSON.stringify({
+                "paymentId": this.editPaymentId,
+                "userId": this.editPayuser,
+                "payMoney": this.editPaymoney
+              })
+            },
+            dataType: "json",
+            success: function (data) {
+              if (data.status) {
+                cp('缴费成功');
+                return;
+              }
+              cp(data.msg);
+            },
+            error: function (jqXHR) {
+              cp('缴费失败');
+            }
+          });
+        },
+        addpay: function (item) {
+          $('#addpay').modal('show');
+          this.curbill = item;
+        },
+        addpayr: function () {
+          $.ajax({
+            type: "POST",
+            url: ip + '/pay',
+            data: {
+              'type': 'add',
+              'pay': JSON.stringify({
+                "paymentId": this.curbill.paymentId,
+                "userId": this.payuser,
+                "payMoney": this.paymoney
+              })
+            },
+            dataType: "json",
+            success: function (data) {
+              if (data.status) {
+                cp('添加成功');
+                return;
+              }
+              cp('添加失败');
+            },
+            error: function (jqXHR) {
+              cp('添加失败');
+            }
+          });
+
+        },
+        add: function () {
+          var deadline = $('#deadline').val();
+
+          if (deadline == '' || this.curtype == '' || this.totalMoney == '') {
+            cp('字段不能为空');
+            return;
+          }
+
+          $.post(ip + '/payment', {
+            'type': 'add',
+            'payment': JSON.stringify({
+              "payTypeId": this.curtype,
+              "totalMoney": this.totalMoney,
+              "deadline": deadline,
+              "describe": this.describe
+            })
+          }, function (data) {
+            data = JSON.parse(data);
+            if (data.status) {
+              cp('添加成功');
+              return;
+            }
+            cp('添加失败');
+          }).error(function () {
+            cp('添加失败');
+          });
+        },
+
+        del: function (item) {
+          if (!confirm('是否删除')) return;
+          $.post(ip + '/payment', {
+            'type': 'delete',
+            'payment': JSON.stringify({
+              'paymentId': item.paymentId
+            })
+          }, function (data) {
+            data = JSON.parse(data);
+            if (data.status) {
+              cp('删除成功');
+              return;
+            }
+            cp('删除失败');
+          }).error(function () {
+            cp('删除失败');
+          });
+        },
+
+        de: function (item) {
+          var _this = this;
+          $.ajax({
+            type: "POST",
+            url: ip + '/search',
+            data: {
+              'type': 'search',
+              'sobj': JSON.stringify({
+                "sobj": "SEARCH_PAY",
+                "fpay": true
+              }),
+              'pay': JSON.stringify({
+                "paymentId": item.paymentId
+              })
+            },
+            dataType: "json",
+            success: function (data) {
+              if (data.status) {
+                cp('加载成功');
+                _this.billinfo = data.msg;
+                return;
+              }
+              cp('加载失败');
+            },
+            error: function (jqXHR) {
+              cp('加载失败');
+            }
+          });
+        },
+        setpage: function (index) {
+          var start = (index - 1) * 10;
+          var end = start + 10;
+          var arr = [];
+          for (var i = start; i < end; i++) {
+            if (this.billList[i]) {
+              arr.push(this.billList[i]);
+            }
+          }
+          this.showbillList = arr;
+        },
+        check: function () {
+          var _this = this;
+          if (this.timer) clearTimeout(this.timer);
+          this.timer = setTimeout(function () {
+            // console.log(_this.payuser);
+            // "userId": this.payuser,
+            if (_this.payuser === '') return;
+
+            $.post(ip + '/user', {
+              'type': 'search',
+              'user': JSON.stringify({userId: _this.payuser})
+            }, function (data) {
+              data = JSON.parse(data);
+              if (data.status) {
+                _this.realname = '该用户名字是:' + data.msg.userRealName;
+                return;
+              }
+              _this.realname = '该用户不存在';              
+            })
+          }, 300);
+        }
+      },
+      mounted: function () {
+        var _this = this;
+
+        $.post(ip + '/syn', {
+          'type': 'search',
+          'sobj': JSON.stringify({
+            "sobj": "search_syn"
+          })
+        }, function (data) {
+          data = JSON.parse(data);
+
+          var arr = [];
+          data.msg.payTypeRespForms.forEach(function (item) {
+            arr.push({
+              id: item.payTypeId,
+              payTypeName: item.payTypeName.split('(')[0]
+            });
+          });
+          _this.billtype = arr;
+          _this.curtype = arr[0].id;
+        });
+
+        $.post(ip + '/search', {
+          type: 'search',
+          'sobj': JSON.stringify({
+            'sobj': 'Search_payment'
+          })
+        }, function (data) {
+          data = JSON.parse(data);
+          _this.billList = data.msg;
+          _this.total = data.msg.length;
+          _this.setpage(1);
+        });
+      }
+    })
+
+    $('.datepicker').datepicker();
+  </script>
+</body>
+
+</html>

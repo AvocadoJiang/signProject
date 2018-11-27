@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>登陆</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/bootstrap-responsive.min.css" />
+  <link rel="stylesheet" href="css/matrix-login.css" />
+  <link href="font-awesome/css/font-awesome.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/jquery.gritter.css" />
+  <link rel="icon" href="img/icon.png" sizes="512x512">
+  
+  <style>
+    body {
+      background-image: url('./img/bg.jpg');
+      background-size: cover;
+      background-color: transparent;
+      margin: 0;
+    }
+    
+    #loginform {
+      background: transparent;
+    }
+
+    #loginbox {
+      position: absolute;
+      margin-top: 30%;
+      left: 50%;
+      transform: translateY(-50%) translateX(-50%);
+
+      background-color: rgba(255, 255, 255, .3);
+      padding: 50px;
+      border-radius: 2px;
+    }
+
+    .btn {
+      margin-right: 6px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="loginbox">
+    <form id="loginform" class="form-vertical" method="post" action="course" enctype="multipart/form-data">
+      <!-- <img src="img/logo.png" alt="Logo" style="margin: 0 auto"/> -->
+      <div class="control-group normal_text">
+        <!-- <h3>
+          <img src="img/logo.png" alt="Logo" />
+        </h3> -->
+      </div>
+      <!-- 
+      <div class="control-group">
+        <div class="controls">
+          <div class="main_input_box">
+            <span class="add-on bg_lg"><i class="icon-user"></i></span><input v-model="usrname" type="text" placeholder="账号" />
+          </div>
+        </div>
+      </div>
+       -->
+      <div class="control-group">
+        <div class="controls">
+          <div class="main_input_box">
+          <input type="text" placeholder="账号"  name="type" value="DOWNLOAD"/>
+            <span class="add-on bg_ly"><i class="icon-lock"></i></span><input type="file" value="选择文件" id="upload-file" nv-file-select="" uploader="uploader" multiple name="file"><a click="@uploadFile">开始上传</a>
+          </div>
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          <div class="main_input_box" style="float: right">
+            <button type="button" class="btn btn-success" @click="login">登陆</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/matrix.login.js"></script>
+  <script src="js/jquery.gritter.min.js"></script>
+  <script src="js/vue.min.js"></script>
+  <script>
+	//var ip = 'https://nbjzj.xin/sign';
+	var ip = '.';
+
+    function cp(text, title) {
+      title = title || '提示'; 
+      $.gritter.add({
+        title:	title,
+        text:	text,
+        sticky: false
+      });	
+    }
+    new Vue({
+      el: '#loginbox',
+      data: {
+        usrname: '',
+        pwd: ''
+      },
+      methods: {
+        login: function() {
+        	
+        	
+        	
+        	/**
+        	$.ajax({
+                url: 'https://nbjzj.xin/sign/search',
+                type: 'post',
+                async: true,
+                dataType: 'json',
+                xhrFields: {
+  					withCredentials: true
+  			  	},
+                data: {
+                	type:'SEARCH_CLASS',
+                    data: JSON.stringify({
+                    	academy_id:'1'
+                    })
+                },
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function () {
+                    console.log("error");
+                }
+            })
+         	*/
+		  /**
+          $.post(ip + '/search', {
+			xhrFields: {
+				withCredentials: true
+			},
+			'type': 'SEARCH_ACADEMY',
+  			'data': JSON.stringify({
+  				school_id:'2',
+  			})
+			
+
+          }, function(data) {
+        	 // console.log(data);
+            
+          }).error(function() {
+            cp('系统错误');
+          });
+		  **/
+		  
+          $.ajax({
+              url: './course',
+              type: 'post',
+              async: true,
+              dataType: 'json',
+              crossDomain: true,
+              xhrFields: {
+				withCredentials: true
+			  },
+              data: {
+            	  type:"DOWNLOAD",
+                  data: JSON.stringify({
+                	'code':'1231231231231',
+                
+                	
+                  })
+              },
+              success: function (data) {
+            	  aler(JSON.stringify({
+                	
+                	
+                  }));
+                  console.log(data);
+              },
+              error: function () {
+                  console.log("error");
+              }
+          })
+          
+          
+          /**
+          
+          $.ajax({
+              url: 'https://nbjzj.xin/sign/login',
+              type: 'post',
+              async: false,
+              dataType: 'json',
+              xhrFields: {
+  				withCredentials: true
+  			  },
+              data: {
+                  data: JSON.stringify({
+                     user_id:"15401190126",
+                     user_psd:"15401190126"
+                  })
+              },
+              success: function (data) {
+                  console.log(data);
+              },
+              error: function () {
+                  console.log("error");
+              }
+          })
+		
+          $.ajax({
+              url: 'https://nbjzj.xin/sign/session',
+              type: 'post',
+              async: false,
+              dataType: 'json',
+              
+              xhrFields: {
+  				withCredentials: true
+  			  },
+              data: {
+                  data: JSON.stringify({
+                     
+                  })
+              },
+              success: function (data) {
+                  console.log(data);
+              },
+              error: function () {
+                  console.log("error");
+              }
+          })
+          
+          $.ajax({
+              url: 'https://nbjzj.xin/sign/logout',
+              type: 'post',
+              async: false,
+              dataType: 'json',
+             
+              xhrFields: {
+  				withCredentials: true
+  			  },
+              data: {
+                  data: JSON.stringify({
+                     
+                  })
+              },
+              success: function (data) {
+                  console.log(data);
+              },
+              error: function () {
+                  console.log("error");
+              }
+          })
+          
+          
+     	
+         
+          $.ajax({
+              url: 'https://nbjzj.xin/sign/session',
+              type: 'post',
+              async: false,
+              dataType: 'json',
+              crossDomain: true,
+              xhrFields: {
+  				withCredentials: true
+  			  },
+              data: {
+                  data: JSON.stringify({
+                     
+                  })
+              },
+              success: function (data) {
+                  console.log(data);
+              },
+              error: function () {
+                  console.log("error");
+              }
+          })
+        
+          
+          */
+
+
+        }
+      }
+    });
+    function uploadFile(){  
+        var fileObj = document.getElementById("upload-file").files[0]; // 获取文件对象  
+        var FileController = "user"; // 接收上传文件的后台地址  
+        if(fileObj){
+        	alert(fileObj);
+        	var form = new FormData();
+        	form.append("file",fileObj);
+        	var xhr = new XMLHttpRequest();
+        	xhr.open("post",FileController,true);
+        	xhr.onload = function(){
+        		alert(xhr.responseText);
+        	};
+        	xhr.send(form);
+        }   
+        //alert(JSON.stringify({
+			//	'academyId': 1,
+				//'class_id': 2,
+				//'identity': "STUDENT"
+			//}))
+    }  
+
+  </script>
+</body>
+
+</html>

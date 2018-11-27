@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Matrix Admin</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/bootstrap-responsive.min.css" />
+  <link rel="stylesheet" href="css/fullcalendar.css" />
+  <link rel="stylesheet" href="css/matrix-style.css" />
+  <link rel="stylesheet" href="css/matrix-media.css" />
+  <link href="font-awesome/css/font-awesome.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/jquery.gritter.css" />
+  <link rel="stylesheet" href="css/et.css">
+  <link rel="icon" href="img/icon.png" sizes="512x512">
+  
+  <!-- <link href='http://fonts.useso.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'> -->
+  <style>
+    input {
+      width: 95% !important;
+    }
+
+    select {
+      width: 95% !important;
+    }
+
+    .v-page-goto {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!--Header-part-->
+  <div id="header">
+    <!-- <h1><a href="dashboard.html">Matrix Admin</a></h1> -->
+    <h1>liu</h1>
+  </div>
+  <!--close-Header-part-->
+
+
+  <!--top-Header-menu-->
+  <div id="user-nav" class="navbar navbar-inverse">
+    <ul class="nav">
+      <li class="dropdown" id="profile-messages">
+        <a title="" href="#" class="dropdown-toggle">
+          <i class="icon icon-user"></i>
+          <span class="text" id="topBarName"></span>
+        </a>
+      </li>
+      <li class="">
+        <a title="" href="#" id="logout">
+          <i class="icon icon-share-alt"></i>
+          <span class="text">退出</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <nav id="nav">
+    <navbar :active="active"></navbar>
+  </nav>
+
+
+  <div id="content">
+    <!--breadcrumbs-->
+    <div id="content-header">
+      <div id="breadcrumb">
+        <a href="index.html" title="Go to Home" class="tip-bottom">
+          <i class="icon-home"></i> 用户管理</a>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      
+      <hr>
+      <button class="btn btn-primary" @click="search('native_student', 0)">本地学生</button>
+      <button class="btn btn-primary" @click="search('oversea_student', 0)">留学生</button>
+      <button class="btn btn-primary" @click="search('ORDINARY TEACHER', 1)">普通教师</button>
+      <button class="btn btn-primary" @click="search('ORDINARY MANAGER', 1)">管理员</button>
+      <p></p>
+      <button class="btn btn-success">导出</button>
+      
+      <div class="row-fluid">
+        <div class="span12">
+          <div class="widget-box">
+            <div class="widget-title">
+              <span class="icon">
+                <i class="icon-th"></i>
+              </span>
+              <h5>用户列表</h5>
+            </div>
+            <div class="widget-content nopadding">
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>护照号</th>
+                    <th>姓名</th>
+                    <th>手机</th>
+                    <th>邮箱</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in showUsrlist">
+                    <td v-text="item.userId"></td>
+                    <td v-text="item.userRealName"></td>
+                    <td v-text="item.userPhone"></td>
+                    <td v-text="item.userEmail"></td>
+                    <td>
+                      <button class="btn btn-success" @click="watch(item)">详情</button>
+                      <button class="btn btn-danger" @click="del(item)">删除</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style="float:right; margin-top: 6px">
+                <v-pagination :total="total" size="small" @page-change="setpage"></v-pagination>
+              </div>
+              <div class="clearfix"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid" id="editForm" v-if="edit" :style="'display:' + (edit === true) ? 'block' : 'none'">
+      <hr>
+      <div class="row-fluid">
+        <div class="span12">
+          <div class="widget-box">
+            <div class="widget-title">
+              <span class="icon">
+                <i class="icon-th"></i>
+              </span>
+              <h5>详细信息</h5>
+            </div>
+            <div class="widget-content nopadding">
+
+              <form action="#" method="get" class="form-horizontal">
+                <div class="control-group">
+                  <label class="control-label">{{ editTeacher ? '护照' : '教工号' }}</label>
+                  <div class="controls">
+                    <input type="text" class="span11" v-model="curUsr.userId" />
+                  </div>
+                </div>
+
+                <div class="control-group">
+                  <label class="control-label">姓名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" v-model="curUsr.userRealName" />
+                  </div>
+                </div>
+
+                <div class="control-group">
+                  <label class="control-label">邮箱</label>
+                  <div class="controls">
+                    <input type="text" class="span11" v-model="curUsr.userEmail" />
+                  </div>
+                </div>
+
+                <div class="control-group">
+                  <label class="control-label">手机号</label>
+                  <div class="controls">
+                    <input type="text" class="span11" v-model="curUsr.userPhone" />
+                  </div>
+                </div>
+
+                <div class="control-group" v-if="!showde">
+                  <label class="control-label"></label>
+                  <div class="controls">
+                    <button class="btn btn-primary" @click="showde = true" type="button">详细信息</button>
+                  </div>
+                </div>
+
+                <div v-if="showde">
+                  <div class="control-group">
+                    <label class="control-label">所属学院</label>
+                    <div class="controls">
+                      <select name="" id="" v-model="curUsr.duserAcademyName">
+                        <option :value="item.academyName" v-for="item in college" v-text="item.academyName"></option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="control-group">
+                    <label class="control-label">现居住住址</label>
+                    <div class="controls">
+                      <input type="text" class="span11" v-model="curUsr.duserAddress" />
+                    </div>
+                  </div>
+
+                  <div class="control-group">
+                    <label class="control-label">年龄</label>
+                    <div class="controls">
+                      <input type="text" class="span11" v-model="curUsr.duserAge" />
+                    </div>
+                  </div>
+
+                  <div class="control-group" v-if="editTeacher">
+                    <label class="control-label">中介电话</label>
+                    <div class="controls">
+                      <input type="text" class="span11" v-model="curUsr.duserAgencyCall" />
+                    </div>
+                  </div>
+
+                  <div class="control-group" v-if="editTeacher">
+                    <label class="control-label">中介名称</label>
+                    <div class="controls">
+                      <input type="text" class="span11" v-model="curUsr.duserAgencyName" />
+                    </div>
+                  </div>
+
+                  <div class="control-group">
+                    <label class="control-label">出生年月</label>
+                    <div class="controls">
+                      <input type="text" class="span11" v-model="curUsr.duserBirthday" />
+                    </div>
+                  </div>
+
+                  <div class="control-group">
+                    <label class="control-label">出生地</label>
+                    <div class="controls">
+                      <input type="text" class="span11" v-model="curUsr.duserBirthplace" />
+                    </div>
+                  </div>
+
+                  <div class="control-group" v-if="editTeacher">
+                    <label class="control-label">班级</label>
+                    <div class="controls">
+                      <select name="" id="" v-model="curUsr.duserClazzName">
+                        <option :value="item.clazzName" v-for="item in klass" v-text="item.clazzName"></option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="control-group" v-if="editTeacher">
+                    <label class="control-label">入学时间</label>
+                    <div class="controls">
+                      <input type="text" class="span11" v-model="curUsr.duserComSchDate" />
+                    </div>
+                  </div>
+
+                  <div class="control-group">
+                    <label class="control-label">性别</label>
+                    <div class="controls">
+                      <select name="" id="" v-model="curUsr.duserGender">
+                        <option :value="item" v-for="item in gen" v-text="item"></option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="control-group">
+                    <label class="control-label">国籍</label>
+                    <div class="controls">
+                      <select name="" id="" v-model="curUsr.duserCountryName">
+                        <option :value="item.countryName" v-for="item in country" v-text="item.countryName"></option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="control-group">
+                    <label class="control-label">现有学历</label>
+                    <div class="controls">
+                      <select name="" id="" v-model="curUsr.duserEduLevel">
+                        <option :value="item" v-for="item in eduLevel" v-text="item"></option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="control-group" v-if="editTeacher">
+                    <label class="control-label">学籍状态</label>
+                    <div class="controls">
+                      <select name="" id="" v-model="curUsr.duserEduStatus">
+                        <option v-for="item in eduState" :value="item.educationName" v-text="item.educationName"></option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="control-group" v-if="editTeacher">
+                    <label class="control-label">担保人</label>
+                    <div class="controls">
+                      <select name="" id="" v-model="updateGua">
+                        <option :value="item.guarantorName + ',' + item.guarantorPhone" v-for="item in gua" v-text="item.guarantorName"></option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="control-group">
+                    <label class="control-label">家庭住址</label>
+                    <div class="controls">
+                      <input type="text" class="span11" v-model="curUsr.duserHomeAddr" />
+                    </div>
+                  </div>
+
+                  <div class="control-group" v-if="editTeacher">
+                    <label class="control-label">毕业离校时间</label>
+                    <div class="controls">
+                      <input type="text" class="span11" v-model="curUsr.duserLevSchDate" />
+                    </div>
+                  </div>
+
+                  <div class="control-group" v-if="editTeacher">
+                    <label class="control-label">专业</label>
+                    <div class="controls">
+                      <select name="" id="" v-model="curUsr.duserMajorName">
+                        <option :value="item.majorName" v-text="item.majorName" v-for="item in major"></option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="control-group">
+                    <label class="control-label">婚姻状况</label>
+                    <div class="controls">
+                      <select name="" v-model="curUsr.duserMarrage" id="">
+                        <option :value="item" v-for="item in mar" v-text="item"></option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="control-group">
+                    <label class="control-label">家庭联系方式</label>
+                    <div class="controls">
+                      <input type="text" class="span11" v-model="curUsr.duserPhone" />
+                    </div>
+                  </div>
+
+                  <div class="control-group" v-if="!editTeacher">
+                    <label class="control-label">教师职称</label>
+                    <div class="controls">
+                      <input type="text" class="span11" v-model="curUsr.duserProfession" />
+                    </div>
+                  </div>
+                  
+                  <div class="control-group" v-if="!editTeacher">
+                    <label class="control-label">教师所处部门</label>
+                    <div class="controls">
+                      <input type="text" class="span11" v-model="curUsr.duserDepartment" />
+                    </div>
+                  </div>
+
+                  <div class="control-group" v-if="!editTeacher">
+                    <label class="control-label">教师部门职责</label>
+                    <div class="controls">
+                      <input type="text" class="span11" v-model="curUsr.duserMaAssignment" />
+                    </div>
+                  </div>
+
+                  <div class="control-group" v-if="editTeacher">
+                    <label class="control-label">签证到期时间</label>
+                    <div class="controls">
+                      <input type="text" class="span11" v-model="curUsr.duserVisDeadline" />
+                    </div>
+                  </div>
+
+                  <div class="control-group">
+                    <label class="control-label">更新密码</label>
+                    <div class="controls">
+                      <input type="text" class="span11" v-model="userPassword" />
+                    </div>
+                  </div>
+                 
+                  <div class="control-group">
+                    <label class="control-label">修改类型</label>
+                    <div class="controls">
+                      <select name="" id="" v-model="userType">
+                        <option value="NATIVE STUDENT">本地学生</option>
+                        <option value="OVERSEA STUDENT">国外学生</option>
+                        <option value="ORDINARY TEACHER">普通教师</option>
+                        <option value="ORDINARY MANAGER">管理员</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- <div class="control-group">
+                    <label class="control-label">护照图片</label>
+                    <div class="controls">
+                      <input type="file">
+                    </div>
+                  </div>
+
+                  <div class="control-group">
+                    <label class="control-label">签证图片</label>
+                    <div class="controls">
+                      <input type="file">
+                    </div>
+                  </div>
+
+                  <div class="control-group">
+                    <label class="control-label">入境图片</label>
+                    <div class="controls">
+                      <input type="file">
+                    </div>
+                  </div>
+                </div> -->
+
+                <div class="form-actions">
+                  <button type="button" class="btn btn-success" @click="save">保存</button>
+                </div>
+              </form>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/excanvas.min.js"></script>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/jquery.ui.custom.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.flot.min.js"></script>
+  <script src="js/jquery.flot.resize.min.js"></script>
+  <script src="js/jquery.peity.min.js"></script>
+  <script src="js/fullcalendar.min.js"></script>
+  <script src="js/matrix.js"></script>
+  <script src="js/matrix.dashboard.js"></script>
+  <script src="js/jquery.gritter.min.js"></script>
+  <script src="js/matrix.interface.js"></script>
+  <script src="js/matrix.chat.js"></script>
+  <script src="js/jquery.validate.js"></script>
+  <script src="js/matrix.form_validation.js"></script>
+  <script src="js/jquery.wizard.js"></script>
+  <script src="js/jquery.uniform.js"></script>
+  <script src="js/select2.min.js"></script>
+  <script src="js/matrix.popover.js"></script>
+  <script src="js/jquery.dataTables.min.js"></script>
+  <script src="js/matrix.tables.js"></script>
+  <script src="js/vue.min.js"></script>
+  <script src="js/components/navbar.js"></script>
+  <script src="js/et.js"></script>
+  
+
+  <script type="text/javascript">
+    function goPage(newURL) {
+      if (newURL != "") {
+        if (newURL == "-") {
+          resetMenu();
+        } else {
+          document.location.href = newURL;
+        }
+      }
+    }
+
+    new Vue({
+      el: '#nav',
+      components: {
+        'navbar': NavBar
+      },
+      data: {
+        active: 1
+      }
+    });
+
+    new Vue({
+      el: '#content',
+      data: function () {
+
+        return {
+          total: 0,
+          curpage: 1,
+
+          usrList: [],
+          showUsrlist: [],
+          curUsr: {},
+          edit: false,
+          showde: false,
+          userPassword: '',
+          userTyper: [],
+          userType: '',
+          updateGua: '',
+
+          mar: [],
+          klass: [],
+          major: [],
+          college: [],
+          country: [],
+          gua: [],
+          eduState: [],
+          gen: [],
+          eduLevel: [],
+
+          editTeacher: false,
+        }
+
+      },
+      methods: {
+        setpage: function (index) {
+          var start = (index - 1) * 10;
+          var end = start + 10;
+          var arr = [];
+          for (var i = start; i < end; i++) {
+            if (this.usrList[i]) {
+              arr.push(this.usrList[i]);
+            }
+          }
+          this.showUsrlist = arr;
+        },
+        search: function(type, ider) {
+          this.editTeacher = (ider === 0);
+          this.edit = false;
+          var _this = this;
+          
+
+          $.post(ip + '/search', {
+            'type': 'search',
+            'sobj': JSON.stringify({
+              "sobj": "SEARCH_USER",
+              "fuser": true
+            }),
+            'user': JSON.stringify({
+              // "userType": "native_student"
+              "userType": type
+            })
+          }, function (data) {
+            data = JSON.parse(data);
+            _this.usrList = data.msg;
+            _this.total = data.msg.length;
+            _this.setpage(1);
+          });
+        },
+        del: function (item) {
+          if (!confirm('是否删除')) return;
+          $.post(ip + '/user', {
+            'type': 'delete',
+            'user': JSON.stringify({
+              'userId': item.userId
+            })
+          }, function (data) {
+            data = JSON.parse(data);
+
+            if (data.status) {
+              cp('删除成功');
+              return;
+            }
+            cp('删除失败');
+          }).error(function() {
+            cp('删除成功');            
+          });
+        },
+        watch: function (item) {
+          this.showde = false;
+          this.curUsr = JSON.parse(JSON.stringify(item));
+          if (this.curUsr.duserAge === -1) this.curUsr.duserAge = '';
+          this.edit = true;
+        },
+        save: function () {
+          if (this.showde) {
+            this.curUsr.ishavedetail = true;
+          }
+
+          if (this.userPassword !== '') {
+            this.curUsr.userPassword = this.userPassword;
+          }
+
+          if (this.userType !== '') {
+            this.curUsr.userType = this.userType;
+          }
+
+          // console.log(JSON.stringify(this.curUsr));
+
+          var obj = {
+            /** 留学生护照号/学历生学号/教师工号 */
+            userId: this.curUsr.userId,
+            /** 用户真实姓名 **/
+            userName: this.curUsr.userRealName,
+            /** 邮箱 **/
+            userEmail: this.curUsr.userEmail,
+            /** 头像，BASE64码，小于200K **/
+            // userHeadPictureData: curUsr.userId,
+            /** 国内常用手机号 **/
+            userPhone: this.curUsr.userPhone,
+            /** 用户年龄 **/
+            duserAge: this.curUsr.duserAge,
+            /** 性别，请求获取性别列表 **/
+            duserGender: this.curUsr.duserGender,
+            /** 国外手机号 **/
+            duserPhone: this.curUsr.duserGuarantorCall,
+            /** 居住地址 **/
+            duserAddress: this.curUsr.duserAddress,
+            /** 教师职称类型名称 **/
+            duserProfessionName: this.curUsr.duserProfession,
+            /** 学生学籍状况名称，请求获取学籍状态列表 **/
+            duserEdustatusName: this.curUsr.duserEduStatus,
+            /** 学生所属学院，请求获取学院列表**/
+            duserAcademyName: this.curUsr.duserAcademyName,
+            /** 学生所属专业，请求获取专业列表 **/
+            duserMajorName: this.curUsr.duserMajorName,
+            /** 学生所属班级，请求获取班级列表 **/
+            duserClazzName: this.curUsr.duserClazzName,
+            /** 生日 **/
+            duserBirthday: this.curUsr.duserBirthday,
+            /** 国家名称，请求获取国家列表 **/
+            duserCountryName: this.curUsr.duserCountryName,
+            /** 出生地 **/
+            duserBirthplace: this.curUsr.duserBirthplace,
+            /** 家庭住址 **/
+            duserHomeAddr: this.curUsr.duserHomeAddr,
+            /** 学生入学时间 **/
+            duserComsch: this.curUsr.duserComSchDate,
+            /** 学生毕业时间 **/
+            duserLevsch: this.curUsr.duserLevSchDate,
+            /** 学生签证到期时间 **/
+            duserVisdeadl: this.curUsr.duserVisDeadline,
+            /** 学生中介姓名 **/
+            duserAgency: this.curUsr.duserAgencyName,
+            /** 学生中介联系方式 **/
+            duserAgencyCall: this.curUsr.duserAgencyCall,
+            /** 是否已婚，请求获取状态列表 **/
+            duserMarrage: this.curUsr.duserMarrage,
+            /** 现有学历,请求获取学历列表 **/
+            duserLevel: this.curUsr.duserEduLevel,
+            /** 教师所处部门 **/
+            duserDepartment: this.curUsr.duserDepartment,
+            /** 教师部门职责 **/
+            duserMaAssignment: this.curUsr.duserMaAssignment,
+          }
+
+          if (this.curUsr.ishavedetail) {
+            obj.ishavedetail = this.curUsr.ishavedetail;
+          }
+
+          if (this.curUsr.userPassword) {
+            obj.userPassword = this.curUsr.userPassword;
+          }
+
+          if (this.curUsr.userType) {
+             obj.userType = this.curUsr.userType;
+          }
+
+          var guaName = this.updateGua.split(',')[0];
+          var guaPhone = this.updateGua.split(',')[1];
+
+          obj.duserGuarantorName = guaName;
+          obj.duserGuarantorCall = guaPhone;
+
+          /** 学生护照页图片，图片以BASE64码形式上传,大小限定几百K内 **/
+          // duserPsorData: curUsr.userId,
+          /** 学生签证页图片 **/
+          // duserVisData: curUsr.userId,
+          /** 学生入境页图片 **/
+          // duserEntrData: curUsr.userId,
+
+          $.post(ip + '/user', {
+            'type': 'update',
+            'user': JSON.stringify(obj)
+          }, function(data) {
+            data = JSON.parse(data);
+
+            if (data.status) {
+              cp('修改成功');
+              return;
+            }
+            cp('修改失败');
+          }).error(function() {
+            cp('修改失败');            
+          });
+        }
+      },
+      mounted: function () {
+        var _this = this;
+
+        this.search('oversea_student');
+
+        $.ajax({
+          type: "POST",
+          url: ip + '/syn',
+          data: {
+            'type': 'search',
+            'sobj': JSON.stringify({
+              "sobj": "search_syn"
+            })
+          },
+          dataType: "json",
+          success: function (data) {
+            _this.klass = data.msg.clazzRespForms;
+            _this.major = data.msg.majorRespForms;
+            _this.college = data.msg.academyRespForms;
+            _this.country = data.msg.countryRespForms;
+            _this.gua = data.msg.guarantorRespForms;
+            _this.eduState = data.msg.eduStatusRespForms;
+          }
+        });
+
+        $.ajax({
+          type: "POST",
+          url: ip + '/config',
+          data: {
+            'type': 'search',
+            'sysc': 'user_type'
+          },
+          dataType: "json",
+          success: function (data) {
+            var arr = [];
+
+            arr = data.msg.names.map(function (item) {
+              return item.split(':')[2];
+            });
+
+            _this.userTyper = arr;
+          },
+          error: function (jqXHR) {
+            layer.msg(jqXHR.status);
+          }
+        });
+
+        $.ajax({
+          type: "POST",
+          url: ip + '/config',
+          data: {
+            'type': 'search',
+            'sysc': 'MARRAGE_TYPE'
+          },
+          dataType: "json",
+          success: function (data) {
+            if (data.status) {
+              var arr = [];
+              data.msg.names.forEach(function (item) {
+                arr.push(item.split(':')[2]);
+              });
+              _this.mar = arr;
+              return;
+            }
+            cp('请求失败');
+          },
+          error: function (jqXHR) {
+            cp('请求失败');
+          }
+        });
+
+        $.ajax({
+          type: "POST",
+          url: ip + '/config',
+          data: {
+            'type': 'search',
+            'sysc': 'GENDER_TYPE'
+          },
+          dataType: "json",
+          success: function (data) {
+            if (data.status) {
+              data.msg.names.forEach(function(item) {
+                _this.gen.push(item.split(':')[2]);
+              });
+              cp('加载成功');
+              return;
+            }
+            cp('加载失败');
+          },
+          error: function (jqXHR) {
+            cp('请求失败');
+          }
+        });
+
+        $.ajax({
+          type: "POST",
+          url: ip + '/config',
+          data: {
+            'type': 'search',
+            'sysc': 'EDUCATION_LEVEL'
+          },
+          dataType: "json",
+          success: function (data) {
+            if (data.status) {
+              data.msg.names.forEach(function(item) {
+                _this.eduLevel.push(item.split(':')[2]);
+              });
+
+              cp('加载成功');
+              return;
+            }
+            cp('加载失败');
+          },
+          error: function (jqXHR) {
+            cp('请求失败');
+          }
+        });
+      }
+    });
+  </script>
+</body>
+
+</html>

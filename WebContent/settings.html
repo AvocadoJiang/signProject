@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>个人设置</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/bootstrap-responsive.min.css" />
+  <link rel="stylesheet" href="css/fullcalendar.css" />
+  <link rel="stylesheet" href="css/matrix-style.css" />
+  <link rel="stylesheet" href="css/matrix-media.css" />
+  <link href="font-awesome/css/font-awesome.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/jquery.gritter.css" />
+  <link rel="icon" href="img/icon.png" sizes="512x512">
+
+</head>
+
+<body>
+  <div id="header">
+    <h1>liu</h1>
+  </div>
+  <div id="user-nav" class="navbar navbar-inverse">
+    <ul class="nav">
+      <li class="dropdown" id="profile-messages">
+        <a title="" href="#" class="dropdown-toggle">
+          <i class="icon icon-user"></i>
+          <!-- <img src="/mosms/image_cache/2017990010/HEADPIC/2017990010_HEADPIC_2018012004364845.png" alt="" id="headimg"> -->
+          <span class="text" id="topBarName"></span>
+        </a>
+      </li>
+      <li class="">
+        <a title="" href="#" id="logout">
+          <i class="icon icon-share-alt"></i>
+          <span class="text">退出</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <nav id="nav">
+    <navbar :active="active"></navbar>
+  </nav>
+
+  <div id="content">
+
+    <div id="content-header">
+      <div id="breadcrumb">
+        <a href="#" title="Go to Home" class="tip-bottom">
+          <i class="icon-home"></i> 留学生管理系统</a>
+        <a href="#" class="current">个人设置</a>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <hr>
+      <div class="row-fluid">
+        <div class="span12">
+          <div class="widget-box">
+            <div class="widget-title">
+              <span class="icon">
+                <i class="icon-align-justify"></i>
+              </span>
+              <h5>修改密码</h5>
+            </div>
+            <div class="widget-content nopadding">
+              <form action="#" method="get" class="form-horizontal">
+                <div class="control-group">
+                  <label class="control-label">新密码</label>
+                  <div class="controls">
+                    <input type="password" class="span11" placeholder="" v-model="newPwd" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">新密码</label>
+                  <div class="controls">
+                    <input type="password" class="span11" placeholder="" v-model="confirmPwd" />
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <button type="button" class="btn btn-success" @click="save">保存</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="js/excanvas.min.js"></script>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/jquery.ui.custom.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.flot.min.js"></script>
+  <script src="js/jquery.flot.resize.min.js"></script>
+  <script src="js/jquery.peity.min.js"></script>
+  <script src="js/fullcalendar.min.js"></script>
+  <script src="js/matrix.js"></script>
+  <script src="js/matrix.dashboard.js"></script>
+  <script src="js/jquery.gritter.min.js"></script>
+  <script src="js/matrix.interface.js"></script>
+  <script src="js/matrix.chat.js"></script>
+  <script src="js/jquery.validate.js"></script>
+  <script src="js/matrix.form_validation.js"></script>
+  <script src="js/jquery.wizard.js"></script>
+  <script src="js/jquery.uniform.js"></script>
+  <script src="js/select2.min.js"></script>
+  <script src="js/matrix.popover.js"></script>
+  <script src="js/jquery.dataTables.min.js"></script>
+  <script src="js/matrix.tables.js"></script>
+  <script src="js/vue.min.js"></script>
+  <script src="js/components/navbar.js"></script>
+
+  <script type="text/javascript">
+    function goPage(newURL) {
+      if (newURL != "") {
+        if (newURL == "-") {
+          resetMenu();
+        }
+        else {
+          document.location.href = newURL;
+        }
+      }
+    }
+
+    new Vue({
+      el: '#nav',
+      components: {
+        'navbar': NavBar
+      },
+      data: {
+        active: 4
+      }
+    });
+
+    new Vue({
+      el: '#content',
+      data: {
+        newPwd: '',
+        confirmPwd: ''
+      },
+      methods: {
+        save: function() {
+          if (this.newPwd === '' || this.confirmPwd === '') {
+            cp('字段不能为空');
+            return;
+          }
+
+          if (this.newPwd !== this.confirmPwd) {
+            cp('两次密码输入不同');
+            return;
+          }
+          var usrInfo = JSON.parse(localStorage.getItem('uinfo'));
+
+          var obj = {
+            userId: usrInfo.userId,
+            userPassword: this.confirmPwd
+          }
+
+          $.post(ip + '/user', {
+            'type': 'update',
+            'user': JSON.stringify(obj)
+          }, function(data) {
+            data = JSON.parse(data);
+
+            if (data.status) {
+              cp('修改成功');
+              return;
+            }
+            cp('修改失败');
+          }).error(function() {
+            cp('修改失败');            
+          });
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>

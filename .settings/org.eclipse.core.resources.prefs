@@ -1,0 +1,7 @@
+eclipse.preferences.version=1
+encoding//config/error.bak=UTF-8
+encoding//config/error.properties=UTF-8
+encoding//config/redis.properties=UTF-8
+encoding//target/test-classes/error.properties=UTF-8
+encoding//target/test-classes/log4j.properties=UTF-8
+encoding//target/test-classes/redis.properties=UTF-8

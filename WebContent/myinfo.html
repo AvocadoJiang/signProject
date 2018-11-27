@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>个人设置</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/bootstrap-responsive.min.css" />
+  <link rel="stylesheet" href="css/fullcalendar.css" />
+  <link rel="stylesheet" href="css/matrix-style.css" />
+  <link rel="stylesheet" href="css/matrix-media.css" />
+  <link href="font-awesome/css/font-awesome.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/jquery.gritter.css" />
+  <link rel="icon" href="img/icon.png" sizes="512x512">
+  
+  <style lang="">
+    .infotitle, .infocontent {
+      font-size: 16px;
+    }
+    .infotitle {
+      width: 20%;
+    }
+    .infocontent{
+      width: 80%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="header">
+    <h1>liu</h1>
+  </div>
+  <div id="user-nav" class="navbar navbar-inverse">
+    <ul class="nav">
+      <li class="dropdown" id="profile-messages">
+        <a title="" href="#" class="dropdown-toggle">
+          <i class="icon icon-user"></i>
+          <span class="text" id="topBarName"></span>
+        </a>
+      </li>
+      <li class="">
+        <a title="" href="#" id="logout">
+          <i class="icon icon-share-alt"></i>
+          <span class="text">退出</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <nav id="nav">
+    <navbar :active="active"></navbar>
+  </nav>
+
+  <div id="content">
+
+    <div id="content-header">
+      <div id="breadcrumb">
+        <a href="#" title="Go to Home" class="tip-bottom">
+          <i class="icon-home"></i> 留学生管理系统</a>
+        <a href="#" class="current">个人信息</a>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <hr>
+      <div class="row-fluid">
+        <div class="span12">
+          <div class="widget-box">
+            <div class="widget-title">
+              <span class="icon">
+                <i class="icon-align-justify"></i>
+              </span>
+              <h5>个人信息</h5>
+            </div>
+            <div class="widget-content nopadding">
+
+              <table class="table table-bordered table-striped">
+
+                <tbody>
+                  <tr>
+                    <td class="infotitle">{{ isTeacher ? '教工号' : '护照号' }}</td>
+                    <td class="infocontent" v-text="info.userId"></td>
+                  </tr>
+
+                  <tr>
+                    <td class="infotitle">姓名</td>
+                    <td class="infocontent" v-text="info.userRealName"></td>
+                  </tr>
+
+                  <tr>
+                    <td class="infotitle">邮箱</td>
+                    <td class="infocontent" v-text="info.userEmail"></td>
+                  </tr>
+
+                  <tr>
+                    <td class="infotitle">国内常用手机号</td>
+                    <td class="infocontent" v-text="info.userPhone"></td>
+                  </tr>
+
+                  <tr>
+                    <td class="infotitle">年龄</td>
+                    <td class="infocontent" v-text="info.duserAge === -1 ? '' : info.duserAge">/td>
+                  </tr>
+
+                  <tr>
+                    <td class="infotitle">国外手机号</td>
+                    <td class="infocontent" v-text="info.duserPhone"></td>
+                  </tr>
+
+                  <tr>
+                    <td class="infotitle">居住地址</td>
+                    <td class="infocontent" v-text="info.duserAddress"></td>
+                  </tr>
+
+                  <tr v-if="!isTeacher">
+                    <td class="infotitle">学籍状况</td>
+                    <td class="infocontent" v-text="info.duserEduStatus"></td>
+                  </tr>
+
+                  <tr>
+                    <td class="infotitle">所属学院</td>
+                    <td class="infocontent" v-text="info.duserAcademyName"></td>
+                  </tr>
+
+                  <tr v-if="!isTeacher">
+                    <td class="infotitle">所属专业</td>
+                    <td class="infocontent" v-text="info.duserMajorName"></td>
+                  </tr>
+
+                  <tr v-if="!isTeacher">
+                    <td class="infotitle">所属班级</td>
+                    <td class="infocontent" v-text="info.duserClazzName">/td>
+                  </tr>
+
+                  <tr>
+                    <td class="infotitle">生日</td>
+                    <td class="infocontent" v-text="info.duserBirthday"></td>
+                  </tr>
+
+                  <tr>
+                    <td class="infotitle">国家名称</td>
+                    <td class="infocontent" v-text="info.duserCountryName"></td>
+                  </tr>
+
+                  <tr>
+                    <td class="infotitle">出生地</td>
+                    <td class="infocontent" v-text="info.duserBirthplace"></td>
+                  </tr>
+
+                  <tr>
+                    <td class="infotitle">家庭住址</td>
+                    <td class="infocontent" v-text="info.duserHomeAddr"></td>
+                  </tr>
+
+                  <tr v-if="!isTeacher">
+                    <td class="infotitle">入学时间</td>
+                    <td class="infocontent" v-text="info.duserComSchDate"></td>
+                  </tr>
+
+                  <tr v-if="!isTeacher">
+                    <td class="infotitle">毕业时间</td>
+                    <td class="infocontent" v-text="info.duserLevSchDate">/td>
+                  </tr>
+
+                  <tr v-if="!isTeacher">
+                    <td class="infotitle">签证到期时间</td>
+                    <td class="infocontent" v-text="info.duserVisDeadline"></td>
+                  </tr>
+
+                  <tr v-if="!isTeacher">
+                    <td class="infotitle">中介姓名</td>
+                    <td class="infocontent" v-text="info.duserAgencyName"></td>
+                  </tr>
+
+                  <tr v-if="!isTeacher">
+                    <td class="infotitle">中介联系方式</td>
+                    <td class="infocontent" v-text="info.duserAgencyCall"></td>
+                  </tr>
+
+                  <tr v-if="!isTeacher">
+                    <td class="infotitle">担保人姓名</td>
+                    <td class="infocontent" v-text="info.duserGuarantorName"></td>
+                  </tr>
+
+                  <tr v-if="!isTeacher">
+                    <td class="infotitle">担保人电话</td>
+                    <td class="infocontent" v-text="info.duserGuarantorCall"></td>
+                  </tr>
+
+                  <tr>
+                    <td class="infotitle">是否已婚</td>
+                    <td class="infocontent" v-text="info.duserMarrage"></td>
+                  </tr>
+                  
+                  <tr>
+                    <td class="infotitle">现有学历</td>
+                    <td class="infocontent" v-text="info.duserEduLevel"></td>
+                  </tr>
+
+                  <tr v-if="isTeacher">
+                    <td class="infotitle">教师职称类型</td>
+                    <td class="infocontent" v-text="info.duserProfession"></td>
+                  </tr>
+
+                  <tr v-if="isTeacher">
+                    <td class="infotitle">教师所处部门</td>
+                    <td class="infocontent" v-text="info.duserDepartment"></td>
+                  </tr>
+                  
+                  <tr v-if="isTeacher">
+                    <td class="infotitle">教师部门职责</td>
+                    <td class="infocontent" v-text="info.duserMaAssignment"></td>
+                  </tr>
+                </tbody>
+              </table>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/excanvas.min.js"></script>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/jquery.ui.custom.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.flot.min.js"></script>
+  <script src="js/jquery.flot.resize.min.js"></script>
+  <script src="js/jquery.peity.min.js"></script>
+  <script src="js/fullcalendar.min.js"></script>
+  <script src="js/matrix.js"></script>
+  <script src="js/matrix.dashboard.js"></script>
+  <script src="js/jquery.gritter.min.js"></script>
+  <script src="js/matrix.interface.js"></script>
+  <script src="js/matrix.chat.js"></script>
+  <script src="js/jquery.validate.js"></script>
+  <script src="js/matrix.form_validation.js"></script>
+  <script src="js/jquery.wizard.js"></script>
+  <script src="js/jquery.uniform.js"></script>
+  <script src="js/select2.min.js"></script>
+  <script src="js/matrix.popover.js"></script>
+  <script src="js/jquery.dataTables.min.js"></script>
+  <script src="js/matrix.tables.js"></script>
+  <script src="js/vue.min.js"></script>
+  <script src="js/components/navbar.js"></script>
+
+  <script type="text/javascript">
+    function goPage(newURL) {
+      if (newURL != "") {
+        if (newURL == "-") {
+          resetMenu();
+        } else {
+          document.location.href = newURL;
+        }
+      }
+    }
+
+    new Vue({
+      el: '#nav',
+      components: {
+        'navbar': NavBar
+      },
+      data: {
+        active: 1
+      }
+    });
+
+    new Vue({
+      el: '#content',
+      data: {
+        info: {},
+        isTeacher: false
+      },
+      mounted: function () {
+        var _this = this;
+        $.ajax({
+          type: "POST",
+          url: ip + '/user',
+          data: {
+            'type': 'search',
+            'user': JSON.stringify({userId: guserId})
+          },
+          dataType: "json",
+          success: function (data) {
+            _this.info = data.msg;
+            _this.isTeacher = (gUsrType === 3)
+          },
+          error: function (jqXHR) {
+            cp('请求失败');
+          }
+        });
+      }
+    })
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>添加通知</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/bootstrap-responsive.min.css" />
+  <link rel="stylesheet" href="css/fullcalendar.css" />
+  <link rel="stylesheet" href="css/matrix-style.css" />
+  <link rel="stylesheet" href="css/matrix-media.css" />
+  <link href="font-awesome/css/font-awesome.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/jquery.gritter.css" />
+  <link rel="icon" href="img/icon.png" sizes="512x512">
+
+  <link href="./js/editor/themes/default/css/umeditor.css" type="text/css" rel="stylesheet">
+
+</head>
+
+<body>
+  <div id="header">
+    <h1>liu</h1>
+  </div>
+
+  <div id="user-nav" class="navbar navbar-inverse">
+    <ul class="nav">
+      <li class="dropdown" id="profile-messages">
+        <a title="" href="#" class="dropdown-toggle">
+          <i class="icon icon-user"></i>
+          <span class="text" id="topBarName"></span>
+        </a>
+      </li>
+      <li class="">
+        <a title="" href="#" id="logout">
+          <i class="icon icon-share-alt"></i>
+          <span class="text">退出</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <nav id="nav">
+    <navbar :active="active"></navbar>
+  </nav>
+
+  <div id="content">
+
+    <div id="content-header">
+      <div id="breadcrumb">
+        <a href="#" title="Go to Home" class="tip-bottom">
+          <i class="icon-home"></i> 留学生管理系统</a>
+        <a href="#" class="current">添加通知</a>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <hr>
+      <div class="row-fluid">
+        <div class="span12">
+          <div class="widget-box">
+            <div class="widget-title">
+              <span class="icon">
+                <i class="icon-align-justify"></i>
+              </span>
+              <h5>编辑通知</h5>
+            </div>
+            <form action="#" method="get" class="form-horizontal">
+
+              <div class="control-group">
+                <label class="control-label">通知标题</label>
+                <div class="controls">
+                  <input type="text" style="width: 90%;" class="span11" id="title" placeholder="" />
+                </div>
+              </div>
+
+              <div class="control-group">
+                <label class="control-label">通知内容</label>
+                <div class="controls">
+                  <textarea type="text/plain" id="myEditor" style="width: 90%;min-height:240px;"></textarea>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-success" id="addNotice" @click="add">添加</button>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/excanvas.min.js"></script>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/jquery.ui.custom.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.flot.min.js"></script>
+  <script src="js/jquery.flot.resize.min.js"></script>
+  <script src="js/jquery.peity.min.js"></script>
+  <script src="js/fullcalendar.min.js"></script>
+  <script src="js/matrix.js"></script>
+  <script src="js/matrix.dashboard.js"></script>
+  <script src="js/jquery.gritter.min.js"></script>
+  <script src="js/matrix.interface.js"></script>
+  <script src="js/matrix.chat.js"></script>
+  <script src="js/jquery.validate.js"></script>
+  <script src="js/matrix.form_validation.js"></script>
+  <script src="js/jquery.wizard.js"></script>
+  <script src="js/jquery.uniform.js"></script>
+  <script src="js/select2.min.js"></script>
+  <script src="js/matrix.popover.js"></script>
+  <script src="js/jquery.dataTables.min.js"></script>
+  <script src="js/matrix.tables.js"></script>
+  <script src="js/vue.min.js"></script>
+  <script src="js/components/navbar.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="./ueditor/ueditor.config.js"></script>
+  <script type="text/javascript" charset="utf-8" src="./ueditor/ueditor.all.js"></script>
+  <script type="text/javascript" src="./ueditor/lang/zh-cn/zh-cn.js"></script>
+
+  <script type="text/javascript">
+    // This function is called from the pop-up menus to transfer to
+    // a different page. Ignore if the value returned is a null string:
+    function goPage(newURL) {
+
+      // if url is empty, skip the menu dividers and reset the menu selection to default
+      if (newURL != "") {
+
+        // if url is "-", it is this page -- reset the menu:
+        if (newURL == "-") {
+          resetMenu();
+        }
+        // else, send page to designated URL            
+        else {
+          document.location.href = newURL;
+        }
+      }
+    }
+
+    new Vue({
+      el: '#nav',
+      components: {
+        'navbar': NavBar
+      },
+      data: {
+        active: 2
+      }
+    });
+
+    var data = {};
+    var um = UE.getEditor('myEditor');
+
+    $('#addNotice').click(function() {
+      var html = UE.getEditor('myEditor').getContent();
+      var title = $('#title').val();
+
+      if (title === '' || html === '') cp('字段不能为空');
+
+      if (window.location.href.split('?')[1] === 'type=edit') {
+        $.post(ip + '/notice', {
+          'type': 'update',
+          'notice': JSON.stringify({
+            noticeTitle: title,
+            noticeContent: html,
+            noticeId: data.noticeId
+          })
+        }, function(data) {
+          console.log(data);
+        });
+        return;
+      }
+
+
+      $.post(ip + '/notice', {
+        'type': 'add',
+        'notice': JSON.stringify({
+          noticeTitle: title,
+          noticeContent: html
+        })
+      }, function(data) {
+        data = JSON.parse(data);
+
+        if (data.status) {
+          cp('添加成功');
+          um.ready(function() {
+            um.setContent('');
+          });
+          $('#title').val('');
+
+          return;
+        }
+
+        cp(data.msg);
+      }).error(function() {
+        cp('添加失败');
+      });
+
+    });
+    
+
+    if (window.location.href.split('?')[1] === 'type=edit') {
+      data = JSON.parse(sessionStorage.getItem('editNotice'));
+      $('#title').val(data.noticeTitle);
+      $('#addNotice').html('修改');
+      um.ready(function() {
+        um.setContent(data.noticeContent);
+      });
+    }
+  </script>
+
+</body>
+
+</html>

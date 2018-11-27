@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+  <title>综合信息管理</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/bootstrap-responsive.min.css" />
+  <link rel="stylesheet" href="css/fullcalendar.css" />
+  <link rel="stylesheet" href="css/matrix-style.css" />
+  <link rel="stylesheet" href="css/matrix-media.css" />
+  <link rel="stylesheet" href="css/uniform.css" />
+  <link rel="icon" href="img/icon.png" sizes="512x512">
+  <!-- <link rel="stylesheet" href="css/select2.css" /> -->
+  <link href="font-awesome/css/font-awesome.css" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="css/jquery.gritter.css" />
+  <style>
+    .widget-title button {
+      margin-top: 7px;
+      margin-right: 7px;
+      float: right;
+    }
+
+    .control-group select {
+      width: 50%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="header">
+    <h1>liu</h1>
+  </div>
+
+  <div id="user-nav" class="navbar navbar-inverse">
+    <ul class="nav">
+      <li class="dropdown" id="profile-messages">
+        <a title="" href="#" class="dropdown-toggle">
+          <i class="icon icon-user"></i>
+          <span class="text" id="topBarName"></span>
+        </a>
+      </li>
+      <li class="">
+        <a title="" href="#" id="logout">
+          <i class="icon icon-share-alt"></i>
+          <span class="text">退出</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <nav id="nav">
+    <navbar :active="active"></navbar>
+  </nav>
+
+  <div id="content">
+    <div id="content-header">
+      <div id="breadcrumb">
+        <a href="#" title="" class="tip-bottom">
+          <i class="icon-home"></i> 留学生管理系统</a>
+        <a href="#" class="current">综合信息管理</a>
+      </div>
+      <h1>综合信息管理</h1>
+    </div>
+    <div class="container-fluid">
+      <hr>
+      <div class="row-fluid">
+        <div class="span6">
+          <div class="widget-box">
+            <div class="widget-title">
+              <span class="icon">
+                <i class="icon-th"></i>
+              </span>
+              <h5>学院管理
+              </h5>
+              <button data-toggle="modal" href="#college" class="btn btn-mini btn-success">添加</button>
+              <button class="btn btn-mini btn-primary togglePanel">折叠</button>
+            </div>
+            <div class="widget-content nopadding">
+              <table class="table table-bordered data-table">
+                <thead>
+                  <tr>
+                    <th>学院名称 - 中文</th>
+                    <th>学院名称 - 英文</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in college">
+                    <td v-text="item.cName"></td>
+                    <td v-text="item.eName"></td>
+                    <td>
+                      <button class="btn btn-mini btn-primary" @click="update('college', item)">
+                        <i class="icon icon-pencil"></i>
+                      </button>
+                      <button class="btn btn-mini btn-danger" @click="del('college', item)">
+                        <i class="icon icon-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="span6">
+          <div class="widget-box">
+            <div class="widget-title">
+              <span class="icon">
+                <i class="icon-th"></i>
+              </span>
+              <h5>专业管理
+              </h5>
+              <button data-toggle="modal" href="#major" class="btn btn-mini btn-success">添加</button>
+              <button class="btn btn-mini btn-primary togglePanel">折叠</button>
+            </div>
+            <div class="widget-content nopadding">
+              <table class="table table-bordered data-table">
+                <thead>
+                  <tr>
+                    <th>专业名称 - 中文</th>
+                    <th>专业名称 - 英文</th>
+                    <th>所属学院</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in major">
+                    <td v-text="item.cName"></td>
+                    <td v-text="item.eName"></td>
+                    <td v-text="item.coggele"></td>
+                    <td>
+                      <button class="btn btn-mini btn-primary" @click="update('major', item)">
+                        <i class="icon icon-pencil"></i>
+                      </button>
+                      <button class="btn btn-mini btn-danger" @click="del('major', item)">
+                        <i class="icon icon-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row-fluid">
+        <div class="span6">
+          <div class="widget-box">
+            <div class="widget-title">
+              <span class="icon">
+                <i class="icon-th"></i>
+              </span>
+              <h5>班级管理
+              </h5>
+              <button data-toggle="modal" href="#class" class="btn btn-mini btn-success">添加</button>
+              <button class="btn btn-mini btn-primary togglePanel">折叠</button>
+            </div>
+            <div class="widget-content nopadding">
+              <table class="table table-bordered data-table">
+                <thead>
+                  <tr>
+                    <th>班级名称 - 中文</th>
+                    <th>班级名称 - 英文</th>
+                    <th>所属专业</th>
+                    <!-- <th>所属学院</th> -->
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in klass">
+                    <td v-text="item.cName"></td>
+                    <td v-text="item.eName"></td>
+                    <!-- <td v-text="item.college"></td> -->
+                    <td v-text="item.major"></td>
+                    <td>
+                      <button class="btn btn-mini btn-primary" @click="update('class', item)">
+                        <i class="icon icon-pencil"></i>
+                      </button>
+                      <button class="btn btn-mini btn-danger" @click="del('class', item)">
+                        <i class="icon icon-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="span6">
+          <div class="widget-box">
+            <div class="widget-title">
+              <span class="icon">
+                <i class="icon-th"></i>
+              </span>
+              <h5>国家管理
+              </h5>
+              <button data-toggle="modal" href="#country" class="btn btn-mini btn-success">添加</button>
+              <button class="btn btn-mini btn-primary togglePanel">折叠</button>
+            </div>
+            <div class="widget-content nopadding">
+              <table class="table table-bordered data-table">
+                <thead>
+                  <tr>
+                    <th>国家 - 中文</th>
+                    <th>国家 - 英文</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in country">
+                    <td v-text="item.cName"></td>
+                    <td v-text="item.eName"></td>
+                    <td>
+                      <button class="btn btn-mini btn-primary" @click="update('country', item)">
+                        <i class="icon icon-pencil"></i>
+                      </button>
+                      <button class="btn btn-mini btn-danger" @click="del('country', item)">
+                        <i class="icon icon-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row-fluid">
+        <div class="span6">
+          <div class="widget-box">
+            <div class="widget-title">
+              <span class="icon">
+                <i class="icon-th"></i>
+              </span>
+              <h5>担保人管理
+              </h5>
+              <button data-toggle="modal" href="#guarantor" class="btn btn-mini btn-success">添加</button>
+              <button class="btn btn-mini btn-primary togglePanel">折叠</button>
+            </div>
+            <div class="widget-content nopadding">
+              <table class="table table-bordered data-table">
+                <thead>
+                  <tr>
+                    <th>担保人名 - 中文</th>
+                    <th>担保人名 - 英文</th>
+                    <th>担保手机号</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in guarantor">
+                    <td v-text="item.cName"></td>
+                    <td v-text="item.eName"></td>
+                    <td v-text="item.phone"></td>
+                    <td>
+                      <button class="btn btn-mini btn-primary" @click="update('guarantor', item)">
+                        <i class="icon icon-pencil"></i>
+                      </button>
+                      <button class="btn btn-mini btn-danger" @click="del('guarantor', item)">
+                        <i class="icon icon-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="span6">
+          <div class="widget-box">
+            <div class="widget-title">
+              <span class="icon">
+                <i class="icon-th"></i>
+              </span>
+              <h5>学籍状态管理
+              </h5>
+              <button data-toggle="modal" href="#stustate" class="btn btn-mini btn-success">添加</button>
+              <button class="btn btn-mini btn-primary togglePanel">折叠</button>
+            </div>
+            <div class="widget-content nopadding">
+              <table class="table table-bordered data-table">
+                <thead>
+                  <tr>
+                    <th>学籍状态 - 中文</th>
+                    <th>学籍状态 - 英文</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in stustate">
+                    <td v-text="item.cName"></td>
+                    <td v-text="item.eName"></td>
+                    <td>
+                      <button class="btn btn-mini btn-primary" @click="update('stustate', item)">
+                        <i class="icon icon-pencil"></i>
+                      </button>
+                      <button class="btn btn-mini btn-danger" @click="del('stustate', item)">
+                        <i class="icon icon-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row-fluid">
+        <div class="span6">
+          <div class="widget-box">
+            <div class="widget-title">
+              <span class="icon">
+                <i class="icon-th"></i>
+              </span>
+              <h5>支付类型管理
+              </h5>
+              <button data-toggle="modal" href="#paymenttype" class="btn btn-mini btn-success">添加</button>
+              <button class="btn btn-mini btn-primary togglePanel">折叠</button>
+            </div>
+            <div class="widget-content nopadding">
+              <table class="table table-bordered data-table">
+                <thead>
+                  <tr>
+                    <th>支付类型 - 中文</th>
+                    <th>支付类型 - 英文</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in paymenttype">
+                    <td v-text="item.cName"></td>
+                    <td v-text="item.eName"></td>
+                    <td>
+                      <button class="btn btn-mini btn-primary" @click="update('paymenttype', item)">
+                        <i class="icon icon-pencil"></i>
+                      </button>
+                      <button class="btn btn-mini btn-danger" @click="del('paymenttype', item)">
+                        <i class="icon icon-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 
+      添加框子
+    -->
+    <div class="container">
+      <div id="college" class="modal hide fade in" style="display: none; ">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">×</a>
+          <h3>添加学院</h3>
+        </div>
+        <div class="modal-body">
+          <div class="row-fluid">
+            <div class="span12">
+              <form action="#" method="get" class="form-horizontal">
+                <div class="control-group">
+                  <label class="control-label">学院中文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="addCollegecName" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">学院英文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="addCollegeeName" />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn btn-success" @click="addCollege">添加</a>
+          <a href="#" class="btn" data-dismiss="modal">取消</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="major" class="modal hide fade in" style="display: none; ">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">×</a>
+          <h3>添加专业</h3>
+        </div>
+        <div class="modal-body">
+          <div class="row-fluid">
+            <div class="span12">
+              <form action="#" method="get" class="form-horizontal">
+                <div class="control-group">
+                  <label class="control-label">专业中文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="addMajorcName" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">专业英文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="addMajoreName" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">所属学院</label>
+                  <div class="controls">
+                    <select v-model="addMajorCollege">
+                      <option v-for="item in college" :value="item.id" v-text="item.cName"></option>
+                    </select>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn btn-success" @click="addMajor">添加</a>
+          <a href="#" class="btn" data-dismiss="modal">取消</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="class" class="modal hide fade in" style="display: none; ">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">×</a>
+          <h3>添加班级</h3>
+        </div>
+        <div class="modal-body">
+          <div class="row-fluid">
+            <div class="span12">
+              <form action="#" method="get" class="form-horizontal">
+                <div class="control-group">
+                  <label class="control-label">班级中文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="addKlasscName" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">班级英文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="addKlasseName" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">所属专业</label>
+                  <div class="controls">
+                    <select v-model="addKlassMajor">
+                      <option v-for="item in major" :value="item.id + ',' + item.coggele" v-text="item.cName"></option>
+                    </select>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn btn-success" @click="addKlass">添加</a>
+          <a href="#" class="btn" data-dismiss="modal">取消</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="country" class="modal hide fade in" style="display: none; ">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">×</a>
+          <h3>添加国家</h3>
+        </div>
+        <div class="modal-body">
+          <div class="row-fluid">
+            <div class="span12">
+              <form action="#" method="get" class="form-horizontal">
+                <div class="control-group">
+                  <label class="control-label">国家中文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="addCountrycName" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">国家英文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="addCountryeName" />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn btn-success" @click="addCountry">添加</a>
+          <a href="#" class="btn" data-dismiss="modal">取消</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="guarantor" class="modal hide fade in" style="display: none; ">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">×</a>
+          <h3>添加担保人</h3>
+        </div>
+        <div class="modal-body">
+          <div class="row-fluid">
+            <div class="span12">
+              <form action="#" method="get" class="form-horizontal">
+                <div class="control-group">
+                  <label class="control-label">担保人中文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="addGuacName" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">担保人英文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="addGuaeName" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">担保人手机号</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="addGuaPhone" />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn btn-success" @click="addGua">添加</a>
+          <a href="#" class="btn" data-dismiss="modal">取消</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="stustate" class="modal hide fade in" style="display: none; ">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">×</a>
+          <h3>添加学籍状态</h3>
+        </div>
+        <div class="modal-body">
+          <div class="row-fluid">
+            <div class="span12">
+              <form action="#" method="get" class="form-horizontal">
+                <div class="control-group">
+                  <label class="control-label">学籍状态中文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="addEduStatcName" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">学籍状态英文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="addEduStateName" />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn btn-success" @click="addEduStat">添加</a>
+          <a href="#" class="btn" data-dismiss="modal">取消</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="paymenttype" class="modal hide fade in" style="display: none; ">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">×</a>
+          <h3>添加支付类型</h3>
+        </div>
+        <div class="modal-body">
+          <div class="row-fluid">
+            <div class="span12">
+              <form action="#" method="get" class="form-horizontal">
+                <div class="control-group">
+                  <label class="control-label">支付类型中文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="addPayTypecName" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">支付类型英文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="addPayTypeeName" />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn btn-success" @click="addPayType">添加</a>
+          <a href="#" class="btn" data-dismiss="modal">取消</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 
+      修改框子
+    -->
+    <div class="container">
+      <div id="collegeEdit" class="modal hide fade in" style="display: none; ">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">×</a>
+          <h3>添加学院</h3>
+        </div>
+        <div class="modal-body">
+          <div class="row-fluid">
+            <div class="span12">
+              <form action="#" method="get" class="form-horizontal">
+                <div class="control-group">
+                  <label class="control-label">学院中文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="updateCollegecName" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">学院英文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="updateCollegeeName" />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn btn-success" @click="updater('college')">更新</a>
+          <a href="#" class="btn" data-dismiss="modal">取消</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="majorEdit" class="modal hide fade in" style="display: none; ">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">×</a>
+          <h3>添加专业</h3>
+        </div>
+        <div class="modal-body">
+          <div class="row-fluid">
+            <div class="span12">
+              <form action="#" method="get" class="form-horizontal">
+                <div class="control-group">
+                  <label class="control-label">专业中文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="updateMajorcName" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">专业英文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="updateMajoreName" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">所属学院</label>
+                  <div class="controls">
+                    <select v-model="updateMajorAcid">
+                      <option v-for="item in college" :value="item.id" v-text="item.cName"></option>
+                    </select>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn btn-success" @click="updater('major')">修改</a>
+          <a href="#" class="btn" data-dismiss="modal">取消</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="classEdit" class="modal hide fade in" style="display: none; ">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">×</a>
+          <h3>添加班级</h3>
+        </div>
+        <div class="modal-body">
+          <div class="row-fluid">
+            <div class="span12">
+              <form action="#" method="get" class="form-horizontal">
+                <div class="control-group">
+                  <label class="control-label">班级中文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="updateKlasscName" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">班级英文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="updateKlasseName" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">所属专业</label>
+                  <div class="controls">
+                    <select v-model="updateKlassMajorId">
+                      <option v-for="item in major" :value="item.id" v-text="item.cName"></option>
+                    </select>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn btn-success" @click="updater('klass')">修改</a>
+          <a href="#" class="btn" data-dismiss="modal">取消</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="countryEdit" class="modal hide fade in" style="display: none; ">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">×</a>
+          <h3>添加国家</h3>
+        </div>
+        <div class="modal-body">
+          <div class="row-fluid">
+            <div class="span12">
+              <form action="#" method="get" class="form-horizontal">
+                <div class="control-group">
+                  <label class="control-label">国家中文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="updateCountrycName" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">国家英文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="updateCountryeName" />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn btn-success" @click="updater('country')">修改</a>
+          <a href="#" class="btn" data-dismiss="modal">取消</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="guarantorEdit" class="modal hide fade in" style="display: none; ">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">×</a>
+          <h3>添加担保人</h3>
+        </div>
+        <div class="modal-body">
+          <div class="row-fluid">
+            <div class="span12">
+              <form action="#" method="get" class="form-horizontal">
+                <div class="control-group">
+                  <label class="control-label">担保人中文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="updateGuacName" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">担保人英文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="updateGuaeName" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">担保人手机号</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="updateGuaPhone" />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn btn-success" @click="updater('guarantor')">修改</a>
+          <a href="#" class="btn" data-dismiss="modal">取消</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container">
+      <div id="stustateEdit" class="modal hide fade in" style="display: none; ">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">×</a>
+          <h3>添加学籍状态</h3>
+        </div>
+        <div class="modal-body">
+          <div class="row-fluid">
+            <div class="span12">
+              <form action="#" method="get" class="form-horizontal">
+                <div class="control-group">
+                  <label class="control-label">学籍状态中文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="updateEduStatuscName" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">学籍状态英文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="updateEduStatuseName" />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn btn-success" @click="updater('stustate')">修改</a>
+          <a href="#" class="btn" data-dismiss="modal">取消</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="paymenttypeEdit" class="modal hide fade in" style="display: none; ">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">×</a>
+          <h3>添加支付类型</h3>
+        </div>
+        <div class="modal-body">
+          <div class="row-fluid">
+            <div class="span12">
+              <form action="#" method="get" class="form-horizontal">
+                <div class="control-group">
+                  <label class="control-label">支付类型中文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="updatePayTypecName" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label">支付类型英文名</label>
+                  <div class="controls">
+                    <input type="text" class="span11" placeholder="" v-model="updatePayTypeeName" />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn btn-success" @click="updater('paymenttype')">修改</a>
+          <a href="#" class="btn" data-dismiss="modal">取消</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/jquery.min.js"></script>
+  <script src="js/jquery.ui.custom.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.uniform.js"></script>
+  <!-- <script src="js/select2.min.js"></script> -->
+  <!-- <script src="js/jquery.dataTables.min.js"></script> -->
+  <script src="js/matrix.js"></script>
+  <script src="js/matrix.tables.js"></script>
+  <script src="js/vue.min.js"></script>
+  <script src="js/components/navbar.js"></script>
+  <script src="js/jquery.gritter.min.js"></script>
+
+  <script type="text/javascript">
+    // This function is called from the pop-up menus to transfer to
+    // a different page. Ignore if the value returned is a null string:
+    function goPage(newURL) {
+
+      // if url is empty, skip the menu dividers and reset the menu selection to default
+      if (newURL != "") {
+
+        // if url is "-", it is this page -- reset the menu:
+        if (newURL == "-") {
+          resetMenu();
+        }
+        // else, send page to designated URL            
+        else {
+          document.location.href = newURL;
+        }
+      }
+    }
+
+    new Vue({
+      el: '#nav',
+      components: {
+        'navbar': NavBar
+      },
+      data: {
+        active: 0
+      }
+    });
+
+    new Vue({
+      el: '#content',
+      data: {
+        college: [],
+        major: [],
+        klass: [],
+        country: [],
+        guarantor: [],
+        stustate: [],
+        paymenttype: [],
+
+        addCollegecName: '',
+        addCollegeeName: '',
+
+        addMajorcName: '',
+        addMajoreName: '',
+        addMajorCollege: '',
+
+        addKlasscName: '',
+        addKlasseName: '',
+        addKlassMajor: '',
+
+        addCountrycName: '',
+        addCountryeName: '',
+
+        addGuacName: '',
+        addGuaeName: '',
+        addGuaPhone: '',
+
+        addEduStatcName: '',
+        addEduStateName: '',
+        
+        addPayTypecName: '',
+        addPayTypeeName: '',
+
+
+
+        updateCollegecName: '',
+        updateCollegeeName: '',
+        updateCollegeId: '',
+
+        updateMajorcName: '',
+        updateMajoreName: '',
+        updateMajorId: '',
+        updateMajorAcid: '',
+
+        updateKlasscName: '',
+        updateKlasseName: '',
+        updateKlassMajorId: '',
+        updateKlassAcId: '',
+        updateKlassId: '',
+
+        updateCountrycName: '',
+        updateCountryeName: '',
+        updateCountryId: '',
+
+        updateGuacName: '',
+        updateGuaeName: '',
+        updateGuaPhone: '',
+        updateGuaId: '',
+        
+        updateEduStatuscName: '',
+        updateEduStatuseName: '',
+        updateEduStatusId: '',
+
+        updatePayTypecName: '',
+        updatePayTypeeName: '',
+        updatePayTypeId: ''
+      },
+      methods: {
+        updater: function(type) {
+          var url = ip;
+          var data = {type: 'update'};
+          var _this = this;
+
+          if (type === 'college') {
+            url += '/academy';
+
+            if (this.updateCollegeId == '' || this.updateCollegecName == '') {
+              cp('不能有空字段');
+              return;
+            }
+
+            data.academy = JSON.stringify({
+              academyId: this.updateCollegeId,
+              academyChineseName: this.updateCollegecName,
+              academyEnglishName: this.updateCollegeeName
+            });
+          } else if (type === 'major') {
+            url += '/major';
+
+            if (this.updateMajorId == '' || this.updateMajorAcid == '' || this.updateMajorcName == '') {
+              cp('不能有空字段');
+              return;
+            }
+
+            data.major = JSON.stringify({
+              majorId: this.updateMajorId,
+              academyId: this.updateMajorAcid,
+              majorChineseName: this.updateMajorcName,
+              majorEnglishName: this.updateMajoreName
+            });
+          } else if (type === 'klass') {
+
+            var acName = '';
+            this.major.forEach(function(item) {
+              if (item.id === _this.updateKlassMajorId) {
+                acName = item.coggele;
+              }
+            });
+
+            var flag = true;
+            this.college.forEach(function(item) {
+              var id = item.cName;
+              if (item.eName) {
+                id = id + '(' + item.eName + ')';
+              }
+
+              if (id === acName) {
+                _this.updateKlassAcId = item.id;
+                flag = false;
+                return;
+              }
+            });
+
+            if (this.updateKlassId == '' || this.updateKlassAcId == '' || this.updateKlassMajorId == '' || this.updateKlasscName == '') {
+              cp('不能有空字段');
+              return;
+            }
+
+            url += '/clazz';
+            data.clazz = JSON.stringify({
+              clazzId: this.updateKlassId,
+              academyId: this.updateKlassAcId,
+              majorId: this.updateKlassMajorId,
+              clazzChinsesName: this.updateKlasscName,
+              clazzEnglishName: this.updateKlasseName
+            });
+          } else if (type === 'country') {
+
+            if (this.updateCountryId == '' || this.updateCountrycName == '') {
+              cp('不能有空字段');
+              return;
+            }
+
+            url += '/country';
+            data.country = JSON.stringify({
+              countryId: this.updateCountryId,
+              countryChineseName: this.updateCountrycName,
+              countryEnglishName: this.updateCountryeName
+            });
+            
+          } else if (type === 'guarantor') {
+
+            if (this.updateGuaId == '' || this.updateGuacName == '' || this.updateGuaPhone == '') {
+              cp('不能有空字段');
+              return;
+            }
+
+            url += '/guarantor';
+            data.guarantor = JSON.stringify({
+              guarantorId: this.updateGuaId,
+              guarantorChineseName: this.updateGuacName,
+              guarantorEnglishName: this.updateGuaeName,
+              guarantorPhone: this.updateGuaPhone
+            });
+
+          } else if (type === 'stustate') {
+
+            if (this.updateEduStatuscName == '' || this.updateEduStatusId == '') {
+              cp('不能有空字段');
+              return;
+            }
+
+            url += '/educationstatus';
+            data.edustatus = JSON.stringify({
+              educationChineseName: this.updateEduStatuscName,
+              updateEduStatuseName: this.educationEnglishName,
+              updateEduStatusId: this.updateEduStatusId
+            });
+
+          } else if (type === 'paymenttype') {
+
+            if (this.updatePayTypeId == '' || this.updatePayTypecName == '') {
+              cp('不能有空字段');
+              return;
+            }
+
+            url += '/paytype';
+            data.paytype = JSON.stringify({
+              payTypeId: this.updatePayTypeId,
+              payTypeChineseName: this.updatePayTypecName,
+              payTypeEnglishName: this.updatePayTypeeName
+            });
+
+          }
+
+          $.post(url, data, function(data) {
+            data = JSON.parse(data);
+            if (data.status) {
+              cp('更新成功');
+              $('.modal').modal('hide');
+              return;
+            }
+            cp(data.msg);            
+          }).error(function() {
+            cp('请求失败');
+          });
+        },
+        update: function (type, item) {
+          var _this = this;
+
+          if (type === 'college') {
+
+            this.updateCollegecName = item.cName;
+            this.updateCollegeeName = item.eName;
+            this.updateCollegeId = item.id;
+
+          } else if (type === 'major') {
+
+            this.updateMajorcName = item.cName;
+            this.updateMajoreName = item.eName;
+            this.updateMajorId = item.id;
+
+          } else if (type === 'class') {
+
+            this.updateKlasscName = item.cName;
+            this.updateKlasseName = item.eName;
+            this.updateKlassId = item.id;
+            
+          } else if (type === 'country') {
+
+            this.updateCountrycName = item.cName;
+            this.updateCountryeName = item.eName;
+            this.updateCountryId = item.id;
+
+          } else if (type === 'guarantor') {
+
+            this.updateGuacName = item.cName;
+            this.updateGuaeName = item.eName;
+            this.updateGuaPhone = item.phone;
+            this.updateGuaId = item.id;
+
+          } else if (type === 'stustate') {
+
+            this.updateEduStatuscName = item.cName;
+            this.updateEduStatuseName = item.eName;
+            this.updateEduStatusId = item.id;
+
+          } else if (type === 'paymenttype') {
+
+            this.updatePayTypecName = item.cName;
+            this.updatePayTypeeName = item.eName;
+            this.updatePayTypeId = item.id;
+
+          }
+
+          $('#' + type + 'Edit').modal('show');          
+        },
+        del: function (type, item) {
+          if (!confirm('确定删除吗')) return;
+          // alert('delete - ' + 'type:' + type + ', id:' + id);
+
+          var url = ip;
+          var data = {type: 'delete'};
+
+          if (type === 'college') {
+
+            url += '/academy';
+            data.academy = JSON.stringify({
+              academyId: item.id
+            });
+
+          } else if (type === 'major') {
+
+            url += '/major';
+            data.major = JSON.stringify({
+              majorId: item.id
+            });
+
+          } else if (type === 'class') {
+
+            url += '/clazz';
+            data.clazz = JSON.stringify({
+              clazzId: item.id
+            });
+
+          } else if (type === 'country') {
+
+            url += '/country';
+            data.country = JSON.stringify({
+              countryId: item.id
+            });
+
+          } else if (type === 'guarantor') {
+
+            url += '/guarantor';
+            data.guarantor = JSON.stringify({
+              guarantorId: item.id
+            });
+
+          } else if (type === 'stustate') {
+
+            url += '/educationstatus';
+            data.edustatus = JSON.stringify({
+              educationId: item.id
+            });
+
+          } else if (type === 'paymenttype') {
+
+            url += '/paytype';
+            data.paytype = JSON.stringify({
+              payTypeId: item.id
+            });
+          }
+
+          $.post(url, data, function(data) {
+            data = JSON.parse(data);
+            if (data.status) {
+              cp('删除成功');
+              return;
+            }
+            cp(data.msg);
+          }).error(function() {
+            cp('删除失败');
+          });
+
+        },
+        addPayType: function() {
+          $.post(ip + '/paytype', {
+            'type': 'add',
+            'paytype': JSON.stringify({
+              payTypeChineseName: this.addPayTypecName,
+              payTypeEnglishName: this.addPayTypeeName
+            })
+          }, function(data) {
+            data = JSON.parse(data);
+            if (data.status) {
+              cp('添加成功');
+              $('.modal').modal('hide');
+              return;
+            }
+            cp(data.msg);            
+          }).error(function() {
+            cp('请求失败');
+          });
+        },
+        addEduStat: function() {
+          $.post(ip + '/educationstatus', {
+            'type': 'add',
+            'edustatus': JSON.stringify({
+              educationChineseName: this.addEduStatcName,
+              educationEnglishName: this.addEduStateName
+            })
+          }, function(data) {
+            data = JSON.parse(data);
+            if (data.status) {
+              cp('添加成功');
+              $('.modal').modal('hide');
+              return;
+            }
+            cp(data.msg);            
+          }).error(function() {
+            cp('请求失败');
+          });
+        },
+        addGua: function() {
+          $.post(ip + '/guarantor', {
+            'type': 'add',
+            'guarantor': JSON.stringify({
+              guarantorChineseName: this.addGuacName,
+              guarantorEnglishName: this.addGuaeName,
+              guarantorPhone: this.addGuaPhone
+            })
+          }, function(data) {
+            data = JSON.parse(data);
+            if (data.status) {
+              cp('添加成功');
+              $('.modal').modal('hide');
+              return;
+            }
+            cp(data.msg);            
+          }).error(function() {
+            cp('请求失败');
+          });
+
+        },
+        addCountry: function() {
+          $.post(ip + '/country', {
+            'type': 'add',
+            'country': JSON.stringify({
+              'countryChineseName': this.addCountrycName,
+              'countryEnglishName': this.addCountryeName              
+            })
+          }, function(data) {
+            data = JSON.parse(data);
+            if (data.status) {
+              cp('添加成功');
+              $('.modal').modal('hide');
+              return;
+            }
+            cp(data.msg);            
+          }).error(function() {
+            cp('请求失败');
+          });
+        },
+        addCollege: function() {
+          $.post(ip + '/academy', {
+            'type': 'add',
+            'academy': JSON.stringify({
+              'academyChineseName': this.addCollegecName,
+              'academyEnglishName': this.addCollegeeName
+            })
+          }, function(data) {
+            data = JSON.parse(data);
+            if (data.status) {
+              cp('添加成功');
+              $('.modal').modal('hide');
+              return;
+            }
+            cp(data.msg);            
+          }).error(function() {
+            cp('请求失败');
+          });
+        },
+        addMajor: function() {
+          $.post(ip + '/major', {
+            'type': 'add',
+            'major': JSON.stringify({
+              'academyId': this.addMajorCollege,
+              'majorChineseName': this.addMajorcName,
+              'majorEnglishName': this.addMajoreName              
+            })
+          }, function(data) {
+            data = JSON.parse(data);
+            if (data.status) {
+              cp('添加成功');
+              $('.modal').modal('hide');
+              return;
+            }
+            cp(data.msg);            
+          }).error(function() {
+            cp('请求失败');
+          });
+        },
+        addKlass: function() {
+          var acid = this.addKlassMajor.split(',')[0];
+          var majorid = this.addKlassMajor.split(',')[1].split('(')[0];
+          console.log(this.addKlassMajor)
+          var flag = true;
+          this.college.forEach(function(item) {
+            // var temp = item.eName === '' ? item.cName : (item.cName + '(' + item.eName + ')');
+
+            if (majorid === item.cName) {
+              majorid = item.id;
+              flag = false;
+              return;
+            }
+          });
+
+          if (flag) {
+            return;
+          }
+
+          $.post(ip + '/clazz', {
+            'type': 'add',
+            'clazz': JSON.stringify({
+              'academyId': majorid,
+              'majorId': acid,
+              'clazzChinsesName': this.addKlasscName,
+              'clazzEnglishName': this.addKlasseName
+            })
+          }, function(data) {
+            data = JSON.parse(data);
+            if (data.status) {
+              cp('添加成功');
+              $('.modal').modal('hide');
+              return;
+            }
+            cp(data.msg);            
+          }).error(function() {
+            cp('请求失败');
+          });
+        },
+        _getInfo: function () {
+          var _this = this;
+
+          $.ajax({
+            type: "POST",
+            url: ip + '/syn',
+            data: {
+              'type': 'search',
+              'sobj': JSON.stringify({
+                "sobj": "search_syn"
+              })
+            },
+            dataType: "json",
+            success: function (data) {
+              var academyData = data.msg.academyRespForms;
+              var majorData = data.msg.majorRespForms;
+              var clazzData = data.msg.clazzRespForms;
+              var countryData = data.msg.countryRespForms;
+              var guarantorData = data.msg.guarantorRespForms;
+              var eduStatusData = data.msg.eduStatusRespForms;
+              var payTypeData = data.msg.payTypeRespForms;
+
+              // 学院
+              academyData.forEach(function(item) {
+                var cname = item.academyName.split('(')[0];
+                var ename = item.academyName.split('(')[1];
+                if (ename) {
+                  ename = ename.replace(/\(|\)/g, '');
+                }
+                _this.college.push({
+                  id: item.academyId,
+                  cName: cname,
+                  eName: ename
+                });
+              });
+
+              // 专业
+              majorData.forEach(function(item) {
+                var cname = item.majorName.split('(')[0];
+                var ename = item.majorName.split('(')[1];
+                if (ename) {
+                  ename = ename.replace(/\(|\)/g, '');
+                }
+                _this.major.push({
+                  id: item.majorId,
+                  coggele: item.academyName,
+                  cName: cname,
+                  eName: ename
+                });
+              });
+
+              // 班级
+              clazzData.forEach(function(item) {
+                var cname = item.clazzName.split('(')[0];
+                var ename = item.clazzName.split('(')[1];
+                if (ename) {
+                  ename = ename.replace(/\(|\)/g, '');
+                }
+                _this.klass.push({
+                  id: item.clazzId,
+                  major: item.majorName,
+                  college: item.academyName,
+                  cName: cname,
+                  eName: ename
+                });
+              });
+
+              // 国家
+              countryData.forEach(function(item) {
+                var cname = item.countryName.split('(')[0];
+                var ename = item.countryName.split('(')[1];
+                if (ename) {
+                  ename = ename.replace(/\(|\)/g, '');
+                }
+                _this.country.push({
+                  id: item.countryId,
+                  cName: cname,
+                  eName: ename
+                });
+              });
+
+              // 担保人
+              guarantorData.forEach(function(item) {
+                var cname = item.guarantorName.split('(')[0];
+                var ename = item.guarantorName.split('(')[1];
+                if (ename) {
+                  ename = ename.replace(/\(|\)/g, '');
+                }
+                _this.guarantor.push({
+                  id: item.guarantorId,
+                  cName: cname,
+                  eName: ename,
+                  phone: item.guarantorPhone
+                });
+              });
+
+              // 学籍状态
+              eduStatusData.forEach(function(item) {
+                var cname = item.educationName.split('(')[0];
+                var ename = item.educationName.split('(')[1];
+                if (ename) {
+                  ename = ename.replace(/\(|\)/g, '');
+                }
+                _this.stustate.push({
+                  id: item.educationId,
+                  cName: cname,
+                  eName: ename,
+                });
+              });
+
+              // 支付类型
+              payTypeData.forEach(function(item) {
+                var cname = item.payTypeName.split('(')[0];
+                var ename = item.payTypeName.split('(')[1];
+                if (ename) {
+                  ename = ename.replace(/\(|\)/g, '');
+                }
+                _this.paymenttype.push({
+                  id: item.payTypeId,
+                  cName: cname,
+                  eName: ename,
+                });
+              });
+              cp('加载成功');
+            },
+            error: function (jqXHR) {
+              cp(jqXHR.status);
+            }
+          });
+        }
+      },
+      mounted: function() {
+        this._getInfo();
+      }
+    });
+
+    $('.togglePanel').parent().parent().find('.widget-content').slideUp();
+
+    $('.togglePanel').click(function() {
+      $(this).parent().parent().find('.widget-content').slideToggle();
+    });
+
+
+    console.log(JSON.parse(localStorage.getItem('uinfo')));
+  </script>
+</body>
+
+</html>
